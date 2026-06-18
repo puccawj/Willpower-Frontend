@@ -134,7 +134,7 @@ export class OrdersComponent implements OnInit {
       });
     } else {
       // Add mode
-      this.apiService.createOrder({ userId: this.userId, productName: this.productName, amount: this.amount }).subscribe({
+      this.apiService.createOrder({ userId: Number(this.userId), productName: this.productName, amount: this.amount }).subscribe({
         next: () => {
           this.closeModal();
           this.loadData();
