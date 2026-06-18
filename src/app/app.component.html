@@ -1,0 +1,56 @@
+<div class="app-container">
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-logo"><i class="fa-solid fa-gauge-high"></i></span>
+      <div class="brand-name">
+        <h2>Willpower</h2>
+        <small>Admin Portal v1.0</small>
+      </div>
+    </div>
+
+    <nav class="nav-menu">
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Dashboard</span>
+      </a>
+      <a routerLink="/users" routerLinkActive="active" class="nav-item">
+        <i class="fa-solid fa-users-gear"></i>
+        <span>Users Registry</span>
+      </a>
+      <a routerLink="/orders" routerLinkActive="active" class="nav-item">
+        <i class="fa-solid fa-file-invoice-dollar"></i>
+        <span>Orders Ledger</span>
+      </a>
+      <a routerLink="/items" routerLinkActive="active" class="nav-item">
+        <i class="fa-solid fa-sliders"></i>
+        <span>Items Config</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="profile-pic"><i class="fa-solid fa-circle-user"></i></div>
+        <div class="profile-info">
+          <strong>Administrator</strong>
+          <small>info&#64;willpower.com</small>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Body Content -->
+  <main class="main-content">
+    <header class="top-navbar">
+      <div class="navbar-left">
+        <span class="date-today"><i class="fa-regular fa-calendar-days"></i> {{ todayDate | date:'fullDate' }}</span>
+      </div>
+      <div class="navbar-right">
+        <div class="sys-badge"><span class="badge badge-success">API Online</span></div>
+      </div>
+    </header>
+
+    <!-- App router content is loaded here -->
+    <router-outlet></router-outlet>
+  </main>
+</div>

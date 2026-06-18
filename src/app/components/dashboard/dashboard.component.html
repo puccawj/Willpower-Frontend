@@ -1,0 +1,118 @@
+<div class="dashboard-header">
+  <div>
+    <h1>Dashboard Overview</h1>
+    <p>Real-time analytics and system metrics summary.</p>
+  </div>
+  <button class="btn btn-primary" (click)="loadDashboardData()">
+    <i class="fa-solid fa-arrows-rotate" [class.fa-spin]="loading"></i> Refresh
+  </button>
+</div>
+
+<div *ngIf="errorMessage" class="error-banner">
+  <i class="fa-solid fa-triangle-exclamation"></i> {{ errorMessage }}
+</div>
+
+<div *ngIf="loading && !errorMessage" class="loading-state">
+  <i class="fa-solid fa-circle-notch fa-spin"></i> Loading system data...
+</div>
+
+<div *ngIf="!loading">
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon u-bg"><i class="fa-solid fa-users"></i></div>
+      <div class="stat-info">
+        <h3>Total Users</h3>
+        <p class="stat-value">{{ usersCount }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon o-bg"><i class="fa-solid fa-cart-shopping"></i></div>
+      <div class="stat-info">
+        <h3>Total Orders</h3>
+        <p class="stat-value">{{ ordersCount }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon a-bg"><i class="fa-solid fa-wallet"></i></div>
+      <div class="stat-info">
+        <h3>Total Volume</h3>
+        <p class="stat-value">${{ totalOrderAmount | number:'1.2-2' }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon i-bg"><i class="fa-solid fa-cubes"></i></div>
+      <div class="stat-info">
+        <h3>Total Items</h3>
+        <p class="stat-value">{{ itemsCount }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2">
+    <!-- Recent Orders -->
+    <div class="card">
+      <div class="card-header">
+        <h3>Recent Orders</h3>
+        <a routerLink="/orders" class="view-all">View All</a>
+      </div>
+      <div class="table-container">
+        <table *ngIf="recentOrders.length > 0; else noOrders">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Customer</th>
+              <th>Product</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of recentOrders">
+              <td>#{{ order.id }}</td>
+              <td>{{ order.user?.username || 'Unknown (ID: ' + order.userId + ')' }}</td>
+              <td><span class="badge badge-primary">{{ order.productName }}</span></td>
+              <td class="amount-cell">${{ order.amount | number:'1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <ng-template #noOrders>
+          <div class="empty-state">No orders placed yet.</div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Recent Users -->
+    <div class="card">
+      <div class="card-header">
+        <h3>Recent Registered Users</h3>
+        <a routerLink="/users" class="view-all">View All</a>
+      </div>
+      <div class="table-container">
+        <table *ngIf="recentUsers.length > 0; else noUsers">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Joined Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of recentUsers">
+              <td>{{ user.id }}</td>
+              <td><strong>{{ user.username }}</strong></td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.createdAt | date:'shortDate' }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <ng-template #noUsers>
+          <div class="empty-state">No users registered yet.</div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,80 @@
+<div class="page-header">
+  <div>
+    <h1>Items Configurations</h1>
+    <p>Manage system registry items, inventory definitions, and descriptions.</p>
+  </div>
+  <button class="btn btn-primary" (click)="openAddModal()">
+    <i class="fa-solid fa-plus"></i> Create Item
+  </button>
+</div>
+
+<div class="action-bar">
+  <div class="search-box">
+    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+    <input 
+      type="text" 
+      class="form-control search-input" 
+      placeholder="Search items by name, description, or ID..." 
+      [(ngModel)]="searchQuery" 
+      (input)="applyFilter()"
+    />
+  </div>
+</div>
+
+<div *ngIf="errorMessage" class="error-banner">
+  <i class="fa-solid fa-triangle-exclamation"></i> {{ errorMessage }}
+</div>
+
+<!-- Items Cards Grid -->
+<div *ngIf="!loading">
+  <div class="items-grid" *ngIf="filteredItems.length > 0; else noItems">
+    <div class="card item-card" *ngFor="let item of filteredItems">
+      <div class="item-icon"><i class="fa-solid fa-box-open"></i></div>
+      <div class="item-body">
+        <span class="item-id">ID: #{{ item.id }}</span>
+        <h3>{{ item.name }}</h3>
+        <p>{{ item.description || 'No description provided.' }}</p>
+        <span class="item-date">Created: {{ item.createdAt | date:'mediumDate' }}</span>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-secondary btn-sm" (click)="openEditModal(item)">
+          <i class="fa-solid fa-pen"></i> Edit
+        </button>
+        <button class="btn btn-danger btn-sm" (click)="deleteItem(item.id)">
+          <i class="fa-solid fa-trash-can"></i> Delete
+        </button>
+      </div>
+    </div>
+  </div>
+  <ng-template #noItems>
+    <div class="empty-state">No items found matching query.</div>
+  </ng-template>
+</div>
+
+<div *ngIf="loading" class="loading-state">
+  <i class="fa-solid fa-spinner fa-spin"></i> Fetching items record...
+</div>
+
+<!-- Create/Edit Item Modal -->
+<div class="modal-overlay" *ngIf="isModalOpen">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>{{ modalTitle }}</h3>
+      <button class="modal-close" (click)="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Item Name</label>
+        <input type="text" class="form-control" placeholder="Enter item name" [(ngModel)]="name" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description (Optional)</label>
+        <textarea class="form-control" rows="4" placeholder="Enter item description" [(ngModel)]="description"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+      <button class="btn btn-primary" (click)="saveItem()">Save Item</button>
+    </div>
+  </div>
+</div>

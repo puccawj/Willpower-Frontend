@@ -1,0 +1,121 @@
+<div class="page-header">
+  <div>
+    <h1>Orders Dashboard</h1>
+    <p>Track transactions, register products, and manage amounts.</p>
+  </div>
+  <button class="btn btn-primary" (click)="openAddModal()">
+    <i class="fa-solid fa-cart-plus"></i> Place Order
+  </button>
+</div>
+
+<div class="action-bar">
+  <div class="search-box">
+    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+    <input 
+      type="text" 
+      class="form-control search-input" 
+      placeholder="Search by order ID, product name, or username..." 
+      [(ngModel)]="searchQuery" 
+      (input)="applyFilter()"
+    />
+  </div>
+</div>
+
+<div *ngIf="errorMessage" class="error-banner">
+  <i class="fa-solid fa-triangle-exclamation"></i> {{ errorMessage }}
+</div>
+
+<!-- Orders Table -->
+<div class="card" *ngIf="!loading">
+  <div class="table-container">
+    <table *ngIf="filteredOrders.length > 0; else noOrders">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Customer Info</th>
+          <th>Product Name</th>
+          <th>Price Amount</th>
+          <th>Transaction Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let order of filteredOrders">
+          <td>#{{ order.id }}</td>
+          <td>
+            <div class="customer-info" *ngIf="order.user; else noUserLinked">
+              <strong>{{ order.user.username }}</strong>
+              <small>{{ order.user.email }}</small>
+            </div>
+            <ng-template #noUserLinked>
+              <span class="badge badge-danger">Deleted User (ID: {{ order.userId }})</span>
+            </ng-template>
+          </td>
+          <td>
+            <span class="badge badge-primary">{{ order.productName }}</span>
+          </td>
+          <td class="amount-cell">${{ order.amount | number:'1.2-2' }}</td>
+          <td>{{ order.createdAt | date:'medium' }}</td>
+          <td>
+            <div class="actions-cell">
+              <button class="btn btn-secondary btn-sm" (click)="openEditModal(order)" title="Edit Order">
+                <i class="fa-solid fa-pen"></i> Edit
+              </button>
+              <button class="btn btn-danger btn-sm" (click)="deleteOrder(order.id)" title="Delete Order">
+                <i class="fa-solid fa-trash-can"></i> Cancel
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #noOrders>
+      <div class="empty-state">No orders match the search query.</div>
+    </ng-template>
+  </div>
+</div>
+
+<div *ngIf="loading" class="loading-state">
+  <i class="fa-solid fa-spinner fa-spin"></i> Fetching orders history...
+</div>
+
+<!-- Place/Edit Order Modal -->
+<div class="modal-overlay" *ngIf="isModalOpen">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>{{ modalTitle }}</h3>
+      <button class="modal-close" (click)="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <!-- Select user dropdown (Only visible on create) -->
+      <div class="form-group" *ngIf="!orderId">
+        <label class="form-label">Select Customer</label>
+        <select class="form-control" [(ngModel)]="userId">
+          <option *ngFor="let u of users" [value]="u.id">
+            {{ u.username }} ({{ u.email }})
+          </option>
+        </select>
+      </div>
+
+      <!-- Select user display (ReadOnly on edit) -->
+      <div class="form-group" *ngIf="orderId">
+        <label class="form-label">Customer (Non-editable)</label>
+        <input type="text" class="form-control" [value]="getUserLabel(userId)" disabled />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Product Name</label>
+        <input type="text" class="form-control" placeholder="e.g. Premium Subscription" [(ngModel)]="productName" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Amount ($ USD)</label>
+        <input type="number" class="form-control" placeholder="0.00" [(ngModel)]="amount" step="0.01" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+      <button class="btn btn-primary" (click)="saveOrder()">Save Transaction</button>
+    </div>
+  </div>
+</div>
